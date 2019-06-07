@@ -48,9 +48,9 @@ void TeleopTurtle::joyCallback(const sensor_msgs::Joy::ConstPtr& joy)
   else if(joy->buttons[5] == 1)
     string.data = "turn right";
   else if(joy->buttons[0] == 1)
-    string.data = "big left";
+    string.data = "expanded left";
   else if(joy->buttons[1] == 1)
-    string.data = "big right";
+    string.data = "expanded right";
   else if(joy->buttons[2] == 1)
     string.data = "stop";
   else
