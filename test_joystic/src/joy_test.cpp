@@ -37,18 +37,21 @@ void TeleopTurtle::joyCallback(const sensor_msgs::Joy::ConstPtr& joy)
 {
   std_msgs::String string;
   if(joy->axes[6] == 1)
-    string.data = "Left_Move";
+    string.data = "left";
   else if(joy->axes[6] == -1)
-    string.data = "Right_Move";
+    string.data = "right";
   else if(joy->axes[7] == 1)
-    string.data = "Forward";
+    string.data = "forward";
   else if(joy->axes[7] == -1)
-    string.data = "Backward";
+    string.data = "backward";
   else if(joy->buttons[4] == 1)
-    string.data = "Left_Turn";
+    string.data = "turn left";
   else if(joy->buttons[5] == 1)
-    string.data = "Right_Turn";
-  else;
+    string.data = "turn right";
+  else if(joy->buttons[2] == 1)
+    string.data = "stop";
+  else
+    string.data = "Default";
   vel_pub_.publish(string.data);
 }
 
@@ -60,3 +63,4 @@ int main(int argc, char** argv)
 
   ros::spin();
 }
+
