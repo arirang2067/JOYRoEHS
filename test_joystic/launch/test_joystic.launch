@@ -1,7 +1,4 @@
 <launch>
- <!-- Turtlesim Node-->
-  <node pkg="turtlesim" type="turtlesim_node" name="sim"/>
-
  <!-- joy node -->
   <node respawn="true" pkg="joy"
         type="joy_node" name="turtle_joy" >
@@ -14,5 +11,5 @@
   <param name="axis_angular" value="0" type="int"/>
   <param name="scale_linear" value="2" type="double"/>
   <param name="scale_angular" value="2" type="double"/>
-  <node pkg="learning_joy" type="turtle_teleop_joy" name="teleop"/>
+  <node pkg="test_joystic" type="joy_test" name="teleop"/>
 </launch>
