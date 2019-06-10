@@ -139,7 +139,7 @@ int main(int argc, char** argv)
     if(count > 1000*1.6)//joystic_controller.Command_Period
     {
       if(joystic_controller.command_switch > 0)
-      joystic_controller.vel_pub_.publish(joystic_controller.string.data);
+      joystic_controller.vel_pub_.publish(joystic_controller.string);
       count = 0;
     }
     else count += 1;
