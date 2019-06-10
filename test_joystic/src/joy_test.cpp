@@ -1,4 +1,5 @@
 #include <ros/ros.h>
+#include <ros/package.h>
 #include <std_msgs/String.h>
 #include <sensor_msgs/Joy.h>
 #include <time.h>
@@ -95,19 +96,20 @@ void Joystic::joyCallback(const sensor_msgs::Joy::ConstPtr& joy)
     else if(command_switch == 1)
     {
       string.data = "stop";
-      command_switch = 0;
     }
     else if(command_switch == 0)command_switch = 0;
   }
-  ROS_INFO("%d",command_switch);
+  //ROS_INFO("%d",command_switch);
 }
 
 void Joystic::Text_Input(void)
 {
   int i = 0;
   std::size_t found;
+  std::string init_pose_path;
   std::ifstream inFile;
-  inFile.open("/home/dmitri/catkin_ws/src/JOYRoEHS/test_joystic/joystic_input.txt");
+  init_pose_path = ros::package::getPath("test_joystic") + "/joystic_input.txt";
+  inFile.open(init_pose_path.c_str());
   for(std::string line; std::getline(inFile,line);)
   {
       found=line.find("=");
@@ -127,17 +129,20 @@ int main(int argc, char** argv)
   Joystic joystic_controller;
   clock_t start, current;
   start = clock();
-  
+  float count;
+  count = 0;
+  ROS_INFO("%f",joystic_controller.Command_Period);
+
   while(ros::ok())
   {
-    if((float)(current-start)/(CLOCKS_PER_SEC)>0.025*joystic_controller.Command_Period)
+    
+    if(count > 1000*1.6)//joystic_controller.Command_Period
     {
-      ROS_INFO("time1");
       if(joystic_controller.command_switch > 0)
       joystic_controller.vel_pub_.publish(joystic_controller.string.data);
-      start = clock();   
+      count = 0;
     }
-    else current = clock();
+    else count += 1;
     usleep(1000);
     ros::spinOnce();
   }

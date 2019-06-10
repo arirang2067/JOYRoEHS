@@ -10,7 +10,7 @@ project(test_joystic)
 find_package(catkin REQUIRED COMPONENTS
   joy
   roscpp
-  turtlesim
+  roslib
 )
 
 ## System dependencies are found with CMake's conventions
