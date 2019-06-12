@@ -4,7 +4,8 @@
 #include <sensor_msgs/Joy.h>
 #include <time.h>
 #include <fstream>
-#include <command_generator/FootStepCommand.h>
+#include <diagnostic_msgs/KeyValue.h>
+#include <alice_foot_step_generator/FootStepCommand.h>
 
 class Command_generator 
 {
@@ -12,22 +13,24 @@ public:
   Command_generator();
   std_msgs::String motion_command;
   std_msgs::String speed_command;
-  command_generator::FootStepCommand FootParam;
+  alice_foot_step_generator::FootStepCommand FootParam;
   ros::Publisher vel_pub_;
   void Set_FootParam(void);
   int command_switch;
-  int speed_switch;
+  std::string speed_switch;
   //Text_Input//
   float Command_Period;
   /////////////
 private:
   void joyCallback(const sensor_msgs::Joy::ConstPtr& joy);
+  void decisionCallback(const diagnostic_msgs::KeyValue::ConstPtr& move_command);
   void Text_Input(void);
   ros::NodeHandle nh_;
   
   int linear_, angular_;
   
   ros::Subscriber joy_sub_;
+  ros::Subscriber dec_sub_;
 };
 
 Command_generator::Command_generator():
@@ -47,8 +50,9 @@ Command_generator::Command_generator():
   ROS_INFO("command_generator_start");
   nh_.param("axis_linear", linear_, linear_);
   nh_.param("axis_angular", angular_, angular_);
-  vel_pub_ = nh_.advertise<command_generator::FootStepCommand>("/heroehs/command_generator", 10);
+  vel_pub_ = nh_.advertise<alice_foot_step_generator::FootStepCommand>("/heroehs/command_generator", 10);
   joy_sub_ = nh_.subscribe<sensor_msgs::Joy>("joy", 10, &Command_generator::joyCallback, this);
+  dec_sub_ = nh_.subscribe<diagnostic_msgs::KeyValue>("/heroehs/move_command", 10, &Command_generator::decisionCallback, this);
 }
 
 void Command_generator::joyCallback(const sensor_msgs::Joy::ConstPtr& joy)
@@ -100,15 +104,15 @@ void Command_generator::joyCallback(const sensor_msgs::Joy::ConstPtr& joy)
   }
   else if(joy->buttons[6] == 1)
   {
-    speed_switch = 1;
+    speed_switch = "1";
   }
   else if(joy->buttons[7] == 1)
   {
-    speed_switch = 3;
+    speed_switch = "3";
   }
   else if(joy->buttons[8] == 1)
   {
-    speed_switch = 2;
+    speed_switch = "2";
   }
   else
   {
@@ -126,9 +130,62 @@ void Command_generator::joyCallback(const sensor_msgs::Joy::ConstPtr& joy)
   //ROS_INFO("%d",command_switch);
 }
 
+void Command_generator::decisionCallback(const diagnostic_msgs::KeyValue::ConstPtr& move_command)
+{
+  if(move_command->key == "left")
+  {
+    FootParam.command = "left";
+  }
+  else if(move_command->key == "right")
+  {
+    FootParam.command = "right";
+  }
+  else if(move_command->key == "forward")
+  {
+    FootParam.command = "forward";
+  }
+  else if(move_command->key == "backward")
+  {
+    FootParam.command = "backward";
+  }
+  else if(move_command->key == "turn left")
+  {
+    FootParam.command = "turn left";
+  }
+  else if(move_command->key == "turn right")
+  {
+    FootParam.command = "turn right";
+  }
+  else if(move_command->key == "expanded left")
+  {
+    FootParam.command = "expanded left";
+  }
+  else if(move_command->key == "expanded right")
+  {
+    FootParam.command = "expanded right";
+  }
+  else if(move_command->key == "stop")
+  {
+    FootParam.command = "stop";
+  }
+
+  if(move_command->value == "1")
+  {
+    speed_switch = "1";
+  }
+  else if(move_command->value == "3")
+  {
+    speed_switch = "3";
+  }
+  else if(move_command->value == "2")
+  {
+    speed_switch = "2";
+  }
+}
+
 void Command_generator::Set_FootParam(void)
 {
-  if(speed_switch == 1)
+  if(speed_switch == "1")
   {
     FootParam.step_num = 4;
     FootParam.step_time = 3;
@@ -136,7 +193,7 @@ void Command_generator::Set_FootParam(void)
     FootParam.side_step_length = 0.05;
     FootParam.step_angle_rad = 0.3;
   }
-  else if(speed_switch == 2)
+  else if(speed_switch == "2")
   {
     FootParam.step_num = 4;
     FootParam.step_time = 2;
@@ -144,7 +201,7 @@ void Command_generator::Set_FootParam(void)
     FootParam.side_step_length = 0.05;
     FootParam.step_angle_rad = 0.3;
   }
-  else if(speed_switch == 3)
+  else if(speed_switch == "3")
   {
     FootParam.step_num = 4;
     FootParam.step_time = 1;

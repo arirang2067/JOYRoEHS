@@ -12,7 +12,7 @@ find_package(catkin REQUIRED COMPONENTS
   roscpp
   roslib
   std_msgs 
-  message_generation
+  alice_foot_step_generator
 )
 
 ## System dependencies are found with CMake's conventions
@@ -48,7 +48,7 @@ find_package(catkin REQUIRED COMPONENTS
 ##   * add every package in MSG_DEP_SET to generate_messages(DEPENDENCIES ...)
 
 ## Generate messages in the 'msg' folder
- add_message_files(FILES FootStepCommand.msg)
+ #add_message_files(FILES FootStepCommand.msg)
 
 ## Generate services in the 'srv' folder
 # add_service_files(
@@ -65,7 +65,7 @@ find_package(catkin REQUIRED COMPONENTS
 # )
 
 ## Generate added messages and services with any dependencies listed here
- generate_messages(DEPENDENCIES std_msgs)
+ #generate_messages(DEPENDENCIES std_msgs)
 
 ################################################
 ## Declare ROS dynamic reconfigure parameters ##
@@ -101,6 +101,7 @@ catkin_package(
 #  LIBRARIES learning_joy
   CATKIN_DEPENDS joy roscpp message_runtime
   DEPENDS system_lib message_runtime
+  
 )
 
 ###########
