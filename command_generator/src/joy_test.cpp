@@ -181,6 +181,7 @@ void Command_generator::decisionCallback(const diagnostic_msgs::KeyValue::ConstP
   {
     speed_switch = "2";
   }
+  vel_pub_.publish(FootParam);
 }
 
 void Command_generator::Set_FootParam(void)
