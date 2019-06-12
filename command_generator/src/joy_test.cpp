@@ -4,8 +4,12 @@
 #include <sensor_msgs/Joy.h>
 #include <time.h>
 #include <fstream>
+#include <iostream>
+#include <ctime>
 #include <diagnostic_msgs/KeyValue.h>
 #include <alice_foot_step_generator/FootStepCommand.h>
+
+using namespace std;
 
 class Command_generator 
 {
@@ -16,15 +20,22 @@ public:
   alice_foot_step_generator::FootStepCommand FootParam;
   ros::Publisher vel_pub_;
   void Set_FootParam(void);
+  void Write_Log(void);
   int command_switch;
-  std::string speed_switch;
+  string speed_switch;
+  string init_log_path;
+  ofstream out;
   //Text_Input//
   float Command_Period;
   /////////////
+
 private:
   void joyCallback(const sensor_msgs::Joy::ConstPtr& joy);
   void decisionCallback(const diagnostic_msgs::KeyValue::ConstPtr& move_command);
-  void Text_Input(void);
+  void Input_Text(void);
+  void Make_Log(void);
+
+
   ros::NodeHandle nh_;
   
   int linear_, angular_;
@@ -38,7 +49,8 @@ Command_generator::Command_generator():
   angular_(2)
 {
   //Default_Setting//
-  Text_Input();
+  Input_Text();
+  Make_Log();
   command_switch = 0;
   speed_switch = 2;
   FootParam.step_num = 4;
@@ -47,6 +59,7 @@ Command_generator::Command_generator():
   FootParam.side_step_length = 0.05;
   FootParam.step_angle_rad = 0.3;
   //////////////////
+  
   ROS_INFO("command_generator_start");
   nh_.param("axis_linear", linear_, linear_);
   nh_.param("axis_angular", angular_, angular_);
@@ -181,7 +194,7 @@ void Command_generator::decisionCallback(const diagnostic_msgs::KeyValue::ConstP
   {
     speed_switch = "2";
   }
-  vel_pub_.publish(FootParam);
+  command_switch = 2;
 }
 
 void Command_generator::Set_FootParam(void)
@@ -212,15 +225,15 @@ void Command_generator::Set_FootParam(void)
   }
 }
 
-void Command_generator::Text_Input(void)
+void Command_generator::Input_Text(void)
 {
   int i = 0;
-  std::size_t found;
-  std::string init_pose_path;
-  std::ifstream inFile;
+  size_t found;
+  string init_pose_path;
+  ifstream inFile;
   init_pose_path = ros::package::getPath("command_generator") + "/command_input.txt";
   inFile.open(init_pose_path.c_str());
-  for(std::string line; std::getline(inFile,line);)
+  for(string line; std::getline(inFile,line);)
   {
       found=line.find("=");
 
@@ -233,7 +246,48 @@ void Command_generator::Text_Input(void)
   inFile.close();
 }
 
+void Command_generator::Make_Log(void)
+{
+    time_t curr_time;
+    struct tm *curr_tm;
+    int year, month, day, hour, min, sec;
+    curr_time = time(NULL);
+    curr_tm = localtime(&curr_time);
+    year = curr_tm->tm_year + 1900;
+    month = curr_tm->tm_mon + 1;
+    day = curr_tm->tm_mday;
+    hour = curr_tm->tm_hour;
+    min = curr_tm->tm_min;
+    sec = curr_tm->tm_sec;
+    char Logname[256];
+    sprintf(Logname,"%d-%d-%d-%d-%d-%d",year,month,day,hour,min,sec);
+    init_log_path = ros::package::getPath("command_generator") + "/log/" + Logname + ".txt";
+    out.open(init_log_path.c_str());
+}
 
+void Command_generator::Write_Log(void)
+{
+    time_t curr_time;
+    struct tm *curr_tm;
+    int year, month, day, hour, min, sec;
+    curr_time = time(NULL);
+    curr_tm = localtime(&curr_time);
+    year = curr_tm->tm_year + 1900;
+    month = curr_tm->tm_mon + 1;
+    day = curr_tm->tm_mday;
+    hour = curr_tm->tm_hour;
+    min = curr_tm->tm_min;
+    sec = curr_tm->tm_sec;
+    char Logname[256];
+    sprintf(Logname,"%d:%d:%d",hour,min,sec);
+    out<<FootParam.command<<"|";
+    out<<FootParam.step_num<<"|";
+    out<<FootParam.step_time<<"|";
+    out<<FootParam.step_length<<"|";
+    out<<FootParam.side_step_length<<"|";
+    out<<FootParam.step_angle_rad<<"|";
+    out<<Logname<<"|"<<'\n';
+}
 
 
 int main(int argc, char** argv)
@@ -253,12 +307,16 @@ int main(int argc, char** argv)
     {
       command_controller.Set_FootParam();
       if(command_controller.command_switch > 0)
-      command_controller.vel_pub_.publish(command_controller.FootParam);
+      {
+        command_controller.vel_pub_.publish(command_controller.FootParam);
+        command_controller.Write_Log();
+      }
       count = 0;
     }
     else count += 1;
     usleep(1000);
     ros::spinOnce();
   }
+  command_controller.out.close();
 }
 
