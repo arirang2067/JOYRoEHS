@@ -94,6 +94,16 @@ void Command_generator::joyCallback(const sensor_msgs::Joy::ConstPtr& joy)
     FootParam.command = "backward";
     command_switch = 2;
   }
+  else if(joy->axes[2] == -1)
+  {
+    FootParam.command = "centered left";
+    command_switch = 2;
+  }
+  else if(joy->axes[5] == -1)
+  {
+    FootParam.command = "centered right";
+    command_switch = 2;
+  }
   else if(joy->buttons[4] == 1)
   {
     FootParam.command = "turn left";
@@ -180,6 +190,14 @@ void Command_generator::decisionCallback(const diagnostic_msgs::KeyValue::ConstP
   else if(move_command->key == "expanded right")
   {
     FootParam.command = "expanded right";
+  }
+  else if(move_command->key == "centered left")
+  {
+    FootParam.command = "centered left";
+  }
+  else if(move_command->key == "centered right")
+  {
+    FootParam.command = "centered right";
   }
   else if(move_command->key == "stop")
   {
