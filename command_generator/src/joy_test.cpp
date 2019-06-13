@@ -207,7 +207,7 @@ void Command_generator::Set_FootParam(void)
   {
     FootParam.step_num = 4;
     FootParam.step_time = 3;
-    FootParam.step_length = 0.2;
+    FootParam.step_length = 0.15;
     FootParam.side_step_length = 0.05;
     FootParam.step_angle_rad = 0.3;
   }
@@ -215,7 +215,7 @@ void Command_generator::Set_FootParam(void)
   {
     FootParam.step_num = 4;
     FootParam.step_time = 2;
-    FootParam.step_length = 0.2;
+    FootParam.step_length = 0.15;
     FootParam.side_step_length = 0.05;
     FootParam.step_angle_rad = 0.3;
   }
@@ -223,7 +223,7 @@ void Command_generator::Set_FootParam(void)
   {
     FootParam.step_num = 4;
     FootParam.step_time = 1;
-    FootParam.step_length = 0.2;
+    FootParam.step_length = 0.15;
     FootParam.side_step_length = 0.05;
     FootParam.step_angle_rad = 0.3;
   }
