@@ -24,6 +24,8 @@ public:
   int command_switch;
   string speed_switch;
   string init_log_path;
+  clock_t start_time;
+  int init_hour, init_min, init_sec;
   ofstream out;
   //Text_Input//
   float Command_Period;
@@ -58,9 +60,11 @@ Command_generator::Command_generator():
   FootParam.step_length = 0.2;
   FootParam.side_step_length = 0.05;
   FootParam.step_angle_rad = 0.3;
+  start_time = clock();
   //////////////////
   
   ROS_INFO("command_generator_start");
+  ROS_INFO("%f", (float)CLOCKS_PER_SEC);
   nh_.param("axis_linear", linear_, linear_);
   nh_.param("axis_angular", angular_, angular_);
   vel_pub_ = nh_.advertise<alice_foot_step_generator::FootStepCommand>("/heroehs/command_generator", 10);
@@ -250,23 +254,34 @@ void Command_generator::Make_Log(void)
 {
     time_t curr_time;
     struct tm *curr_tm;
-    int year, month, day, hour, min, sec;
+    int year, month, day;
     curr_time = time(NULL);
     curr_tm = localtime(&curr_time);
     year = curr_tm->tm_year + 1900;
     month = curr_tm->tm_mon + 1;
     day = curr_tm->tm_mday;
-    hour = curr_tm->tm_hour;
-    min = curr_tm->tm_min;
-    sec = curr_tm->tm_sec;
+    init_hour = curr_tm->tm_hour;
+    init_min = curr_tm->tm_min;
+    init_sec = curr_tm->tm_sec;
     char Logname[256];
-    sprintf(Logname,"%d-%d-%d-%d-%d-%d",year,month,day,hour,min,sec);
+    sprintf(Logname,"%d-%d-%d-%d-%d-%d",year,month,day,init_hour,init_min,init_sec);
     init_log_path = ros::package::getPath("command_generator") + "/log/" + Logname + ".txt";
     out.open(init_log_path.c_str());
+    out<<"command|";
+    out<<"step_num|";
+    out<<"step_time|";
+    out<<"step_length|";
+    out<<"side_step_length|";
+    out<<"step_angle_rad|";
+    out<<"logtime|"<<'\n';
 }
 
 void Command_generator::Write_Log(void)
 {
+    clock_t curr_t;
+    curr_t = clock();
+    float result_time;
+    result_time = (float)(curr_t-start_time)/(CLOCKS_PER_SEC);
     time_t curr_time;
     struct tm *curr_tm;
     int year, month, day, hour, min, sec;
@@ -275,9 +290,23 @@ void Command_generator::Write_Log(void)
     year = curr_tm->tm_year + 1900;
     month = curr_tm->tm_mon + 1;
     day = curr_tm->tm_mday;
-    hour = curr_tm->tm_hour;
-    min = curr_tm->tm_min;
-    sec = curr_tm->tm_sec;
+    hour = curr_tm->tm_hour - init_hour;
+    min = curr_tm->tm_min - init_min;
+    sec = curr_tm->tm_sec - init_sec;
+    if(sec < 0) 
+    {
+      sec = sec+60;
+      min = min - 1;
+    }
+    if(min < 0)
+    {
+      min = min+60;
+      hour = hour - 1;
+    }
+    if(hour < 0)
+    {
+      hour = hour+24;
+    }
     char Logname[256];
     sprintf(Logname,"%d:%d:%d",hour,min,sec);
     out<<FootParam.command<<"|";
