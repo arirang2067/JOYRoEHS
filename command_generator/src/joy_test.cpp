@@ -59,9 +59,9 @@ Command_generator::Command_generator():
   Make_Log();
   command_switch = 0;
   speed_switch = 2;
-  FootParam.step_num = 4;
-  FootParam.step_time = 1;
-  FootParam.step_length = 0.2;
+  FootParam.step_num = 2;
+  FootParam.step_time = 5;
+  FootParam.step_length = 0.15;
   FootParam.side_step_length = 0.05;
   FootParam.step_angle_rad = 0.3;
   start_time = clock();
