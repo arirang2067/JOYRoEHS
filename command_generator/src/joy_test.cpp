@@ -61,7 +61,7 @@ Command_generator::Command_generator():
   speed_switch = 2;
   FootParam.step_num = 2;
   FootParam.step_time = 5;
-  FootParam.step_length = 0.15;
+  FootParam.step_length = 0.1;
   FootParam.side_step_length = 0.05;
   FootParam.step_angle_rad = 0.3;
   start_time = clock();
@@ -236,7 +236,7 @@ void Command_generator::Set_FootParam(void)
   {
     FootParam.step_num = 2;
     FootParam.step_time = 5;
-    FootParam.step_length = 0.15;
+    FootParam.step_length = 0.1;
     FootParam.side_step_length = 0.05;
     FootParam.step_angle_rad = 0.3;
   }
@@ -244,7 +244,7 @@ void Command_generator::Set_FootParam(void)
   {
     FootParam.step_num = 2;
     FootParam.step_time = 5;
-    FootParam.step_length = 0.15;
+    FootParam.step_length = 0.1;
     FootParam.side_step_length = 0.05;
     FootParam.step_angle_rad = 0.3;
   }
@@ -252,7 +252,7 @@ void Command_generator::Set_FootParam(void)
   {
     FootParam.step_num = 2;
     FootParam.step_time = 5;
-    FootParam.step_length = 0.15;
+    FootParam.step_length = 0.1;
     FootParam.side_step_length = 0.05;
     FootParam.step_angle_rad = 0.3;
   }
