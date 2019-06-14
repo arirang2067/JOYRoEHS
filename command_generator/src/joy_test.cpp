@@ -24,6 +24,8 @@ public:
   int command_switch;
   string speed_switch;
   string init_log_path;
+  string current_status;
+  string accept_or_ignore;
   clock_t start_time;
   int init_hour, init_min, init_sec;
   ofstream out;
@@ -34,6 +36,7 @@ public:
 private:
   void joyCallback(const sensor_msgs::Joy::ConstPtr& joy);
   void decisionCallback(const diagnostic_msgs::KeyValue::ConstPtr& move_command);
+  void current_status_Callback(const std_msgs::String::ConstPtr& log_moving_status);
   void Input_Text(void);
   void Make_Log(void);
 
@@ -44,6 +47,7 @@ private:
   
   ros::Subscriber joy_sub_;
   ros::Subscriber dec_sub_;
+  ros::Subscriber curr_status_sub_;
 };
 
 Command_generator::Command_generator():
@@ -68,8 +72,10 @@ Command_generator::Command_generator():
   nh_.param("axis_linear", linear_, linear_);
   nh_.param("axis_angular", angular_, angular_);
   vel_pub_ = nh_.advertise<alice_foot_step_generator::FootStepCommand>("/heroehs/command_generator", 10);
+
   joy_sub_ = nh_.subscribe<sensor_msgs::Joy>("joy", 10, &Command_generator::joyCallback, this);
   dec_sub_ = nh_.subscribe<diagnostic_msgs::KeyValue>("/heroehs/move_command", 10, &Command_generator::decisionCallback, this);
+  curr_status_sub_ = nh_.subscribe<std_msgs::String>("/heroehs/log_moving_status", 10, &Command_generator::current_status_Callback, this);
 }
 
 void Command_generator::joyCallback(const sensor_msgs::Joy::ConstPtr& joy)
@@ -219,6 +225,11 @@ void Command_generator::decisionCallback(const diagnostic_msgs::KeyValue::ConstP
   command_switch = 2;
 }
 
+void Command_generator::current_status_Callback(const std_msgs::String::ConstPtr& log_moving_status)
+{
+  current_status = log_moving_status->data;
+}
+
 void Command_generator::Set_FootParam(void)
 {
   if(speed_switch == "1")
@@ -286,8 +297,10 @@ void Command_generator::Make_Log(void)
     init_log_path = ros::package::getPath("command_generator") + "/log/" + Logname + ".txt";
     out.open(init_log_path.c_str());
     out<<"command|";
-    out<<"step_num|";
+    out<<"status|";
+    out<<"accept/ignore|";
     out<<"step_time|";
+    out<<"step_num|";
     out<<"step_length|";
     out<<"side_step_length|";
     out<<"step_angle_rad|";
@@ -325,11 +338,15 @@ void Command_generator::Write_Log(void)
     {
       hour = hour+24;
     }
+    if(FootParam.command == current_status)accept_or_ignore = "accept";
+    else accept_or_ignore = "ignore";
     char Logname[256];
     sprintf(Logname,"%d:%d:%d",hour,min,sec);
     out<<FootParam.command<<"|";
-    out<<FootParam.step_num<<"|";
+    out<<current_status<<"|";
+    out<<accept_or_ignore<<"|";
     out<<FootParam.step_time<<"|";
+    out<<FootParam.step_num<<"|";
     out<<FootParam.step_length<<"|";
     out<<FootParam.side_step_length<<"|";
     out<<FootParam.step_angle_rad<<"|";
