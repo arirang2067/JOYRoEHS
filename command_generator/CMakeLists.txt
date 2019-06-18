@@ -14,7 +14,9 @@ find_package(catkin REQUIRED COMPONENTS
   std_msgs 
   alice_foot_step_generator
 )
-
+set(ENV{PKG_CONFIG_PATH} "$ENV{PKG_CONFIG_PATH}:${CATKIN_DEVEL_PREFIX}/lib/pkgconfig")
+find_package(PkgConfig)
+pkg_check_modules(yaml_cpp yaml-cpp REQUIRED)
 ## System dependencies are found with CMake's conventions
 # find_package(Boost REQUIRED COMPONENTS system)
 
@@ -97,7 +99,7 @@ find_package(catkin REQUIRED COMPONENTS
 ## CATKIN_DEPENDS: catkin_packages dependent projects also need
 ## DEPENDS: system dependencies of this project that dependent projects also need
 catkin_package(
-#  INCLUDE_DIRS include
+# INCLUDE_DIRS include
 #  LIBRARIES learning_joy
   CATKIN_DEPENDS joy roscpp message_runtime
   DEPENDS system_lib message_runtime
@@ -113,6 +115,7 @@ catkin_package(
 include_directories(
 # include
   ${catkin_INCLUDE_DIRS}
+  ${yaml_cpp_INCLUDE_DIRS}
 )
 
 ## Declare a C++ library
@@ -124,7 +127,7 @@ add_executable(turtle_teleop_joy src/turtle_teleop_joy.cpp)
 target_link_libraries(turtle_teleop_joy ${catkin_LIBRARIES})
 
 add_executable(joy_test src/joy_test.cpp)
-target_link_libraries(joy_test ${catkin_LIBRARIES})
+target_link_libraries(joy_test ${yaml_cpp_LIBRARIES} ${catkin_LIBRARIES})
 
 ## Add cmake target dependencies of the library
 ## as an example, code may need to be generated before libraries
@@ -194,6 +197,7 @@ target_link_libraries(joy_test ${catkin_LIBRARIES})
 # catkin_add_gtest(${PROJECT_NAME}-test test/test_learning_joy.cpp)
 # if(TARGET ${PROJECT_NAME}-test)
 #   target_link_libraries(${PROJECT_NAME}-test ${PROJECT_NAME})
+
 # endif()
 
 ## Add folders to be run by python nosetests
