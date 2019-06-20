@@ -1,9 +1,0 @@
-command|status|accept/ignore|step_time|step_num|step_length|side_step_length|step_angle_rad|logtime|
-forward||ignore|1|4|0.2|0.05|0.3|0:0:16|
-right||ignore|1|4|0.2|0.05|0.3|0:0:17|
-backward||ignore|1|4|0.2|0.05|0.3|0:0:18|
-left||ignore|1|4|0.2|0.05|0.3|0:0:19|
-forward||ignore|1|4|0.2|0.05|0.3|0:0:20|
-right||ignore|1|4|0.2|0.05|0.3|0:0:21|
-backward||ignore|1|4|0.2|0.05|0.3|0:0:22|
-left||ignore|1|4|0.2|0.05|0.3|0:0:23|

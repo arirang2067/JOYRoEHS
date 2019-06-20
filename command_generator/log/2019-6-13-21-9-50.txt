@@ -1,5 +1,0 @@
-command|step_num|step_time|step_length|side_step_length|step_angle_rad|logtime|
-centered left|4|1|0.2|0.05|0.3|0:0:5|
-centered right|4|1|0.2|0.05|0.3|0:0:6|
-centered left|4|1|0.2|0.05|0.3|0:0:7|
-centered right|4|1|0.2|0.05|0.3|0:0:8|
