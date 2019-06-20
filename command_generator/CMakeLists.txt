@@ -123,9 +123,6 @@ include_directories(
 #   src/${PROJECT_NAME}/learning_joy.cpp
 # )
 
-add_executable(turtle_teleop_joy src/turtle_teleop_joy.cpp)
-target_link_libraries(turtle_teleop_joy ${catkin_LIBRARIES})
-
 add_executable(joy_test src/joy_test.cpp)
 target_link_libraries(joy_test ${yaml_cpp_LIBRARIES} ${catkin_LIBRARIES})
 

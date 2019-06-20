@@ -1,0 +1,1 @@
+command|status|accept/ignore|step_time|step_num|step_length|side_step_length|step_angle_rad|logtime|
